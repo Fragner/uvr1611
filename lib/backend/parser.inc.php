@@ -20,7 +20,6 @@ class Parser
 	 */
 	const SIGN_BIT = 0x8000;
 	const POSITIVE_VALUE_MASK = 0x00000FFF;
-	const NEGATIVE_VALUE_MASK = 0xFFFFF000;
 	const DIGITAL_ON = 1;
 	const DIGITAL_OFF = 0;
 	const SPEED_ACTIVE = 0x80;
@@ -33,8 +32,11 @@ class Parser
 	const TYPE_RADIATION = 0x4000;
 	const TYPE_RAS = 0x7000;
 	const RAS_POSITIVE_MASK = 0x000001FF;
-	const RAS_NEGATIVE_MASK = 0xFFFFFE00;
-	
+	const INT32_MASK = 0xFFFFFFFF;
+	const INT32_SIGN = 0x80000000;
+
+	const NEGATIVE_VALUE_MASK = 0xFFFFF000;
+	const RAS_NEGATIVE_MASK = 0xFFFFFE00;	
 	const RAS_NORMAL   = 0x200;
 	const RAS_LOWERING = 0x400;
 	const RAS_STANDBY  = 0x600;
@@ -76,7 +78,7 @@ class Parser
 		}
 
 		// unpack binary string
-		$package = unpack("v16analog/Sdigital/C4speed/Cactive".
+		$package = unpack("v16analog/vdigital/C4speed/Cactive".
 						  "/Vpower1/vkWh1/vMWh1/Vpower2/vkWh2/vMWh2",$data);
 		
 		// 16 Analog channels
@@ -251,7 +253,12 @@ class Parser
 	private static function convertPower($value, $active, $position)
 	{
 		if($active & $position) {
-			return ($value/2560);
+			if($value & self::INT32_SIGN) {
+				return -(($value ^ self::INT32_MASK)+1) / 2560;
+			}
+			else {
+				return ($value/2560);
+			}
 		}
 		else {
 			return "NULL";

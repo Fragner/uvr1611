@@ -84,7 +84,7 @@ class Uvr1611
 	public function getLatest()
 	{
 		$this->logfile->writeLogInfo("uvr1611-connection.inc - getLatest - 1\n");
-		$this->connect();-
+		$this->connect();
 		$this->getCount();
 		create_pid();
 		$this->logfile->writeLogInfo("uvr1611-connection.inc - pid created - 2\n");
@@ -143,7 +143,7 @@ class Uvr1611
 		// send end read command
 		if($this->query(self::END_READ, 1) != self::END_READ) {
 			$this->logfile->writeLogError("uvr1611-connection.inc-endRead - End read command failed.\n");			
-			throw new Exception("End read command failed.");
+//test			throw new Exception("End read command failed.");
 		}
 		// reset data if configured
 		if($this->config->reset) {
@@ -182,7 +182,7 @@ class Uvr1611
 				// build command
 				$cmd = pack("C6", self::READ_DATA, $address1, $address2, $address3, 1,
 								  self::READ_DATA + 1 + $address1 + $address2 + $address3);
-				$this->logfile->writeLogInfo("uvr1611-connection.inc - fetchData - 2-pack - cmd: ". $this->address." \n");
+				$this->logfile->writeLogInfo("uvr1611-connection.inc - fetchData - 2-pack -address  : ". $this->address." \n");
 				$this->logfile->writeLogInfo("uvr1611-connection.inc - fetchData - 2-pack -fetchsize: ". $this->fetchSize." \n");
 
 				$data = $this->query($cmd, $this->fetchSize);
@@ -350,9 +350,16 @@ class Uvr1611
 	{
 		if($this->sock == null) {
 			$this->sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-			socket_connect($this->sock,
-						   $this->config->address,
-						   $this->config->port);
+			socket_set_option($this->sock,SOL_SOCKET, SO_RCVTIMEO, array("sec"=>2, "usec"=>0));
+//			$bError = socket_connect($this->sock,
+//						   $this->config->address,
+//						   $this->config->port);
+			if (!(socket_connect($this->sock,$this->config->address,$this->config->port))){
+				$this->logfile->writeLogError("uvr1611-connection.inc-connect - No connection to BL-Net possible!\n");			
+				return false;			
+			}
+			$this->logfile->writeLogInfo("uvr1611-connection.inc-connect - Connection to BL-Net possible!\n");						
+			return true;
 		}
 	}
 	
@@ -404,12 +411,16 @@ class Uvr1611
 			$data = "";
 			// get response until length or less 32 bytes
 			do {
+				/* sometimes the query will not finish */
+				$this->logfile->writeLogInfo("uvr1611-connection.inc - query - socket_read \n");
 				$return = socket_read($this->sock, $length, PHP_BINARY_READ);
+				//$this->logfile->writeLogInfo("uvr1611-connection.inc - query - socket_readed: ".bin2hex($return)."\n");
+				$this->logfile->writeLogInfo("uvr1611-connection.inc - query - socket_readed\n");				
 				$data .= $return;
 				$receives++;
 			}
 			while(strlen($return)>32 && strlen($data) < $length);
-			$this->logfile->writeLogInfo("uvr1611-connection.inc - query - bytes received: ".$receives."\n");
+			$this->logfile->writeLogInfo("uvr1611-connection.inc - query - packets received: ".$receives."\n");
 			return $data;
 		}
 

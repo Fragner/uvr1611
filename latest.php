@@ -9,7 +9,8 @@ header('Content-type: application/json; charset=utf-8');
 $data = load_cache("uvr1611_latest", Config::getInstance()->app->latestcache);
 
 $debug = 0;
-if ($argc > 1) {
+if (PHP_SAPI === 'cli'){
+//if ($argc > 1) {
 	//debug --> echo only when an additional input received
 	$debug = 1;
 }

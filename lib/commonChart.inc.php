@@ -72,6 +72,7 @@ if ($count > 0) {
 		    	}
 		    	$data[] = $value;
 		    	if(count($data) == 64) {
+	         		    $logfile->writeLogState("commonChart.inc.php - insertData ".$count."\n");
 				    $database->insertData($data);
 				    $data = Array();
 			    }

@@ -143,7 +143,7 @@ class Uvr1611
 		create_pid();
 		// send end read command
 		if($this->query(self::END_READ, 1) != self::END_READ) {
-			$this->logfile->writeLogError("uvr1611-connection.inc-endRead - End read command failed.\n");			
+			$this->logfile->writeLogWarn("uvr1611-connection.inc-endRead - End read command failed.\n");			
 //test			throw new Exception("End read command failed.");
 		}
 		// reset data if configured
@@ -196,11 +196,24 @@ class Uvr1611
 						$this->address = $this->addressEnd;
 					$this->count--;
 					close_pid();
-					return $this->splitDatasets($data);
+
+/*frama*/
+					$frames = array();
+					$frames = $this->splitDatasets($data);
+					/* check if received values are valid --> analog1 <> 0.0 */
+//json_encode($frames);
+//	foreach ($frames as $value) {
+//					$this->logfile->writeLogState("uvr1611-connection.inc - fetchData Current value: ".$value."\n");
+//		}
+//$value = $frames->frame1; 
+//echo "value = $value";
+//var_dump($frames);
+//					$this->logfile->writeLogState("uvr1611-connection.inc - fetchData analog1= ".json_encode($frames)."\n");
+					return $frames;
+//					return $this->splitDatasets($data);
 				}
 				$this->logfile->writeLogInfo("uvr1611-connection.inc - fetchData - 4\n");
 				close_pid();
-				$this->logfile->writeLogError("uvr1611-connection.inc-fetchData 1- ".$e->getMessage()."\n");
 				throw new Exception("Could not get data!");
 			}
 

@@ -37,6 +37,9 @@ $period = 0;
 if(isset($_GET["period"]) && $_GET["period"] == "week") {
 	$period = 6;
 }
+else if(isset($_GET["period"]) && $_GET["period"] == "year") {
+	$period = 364;
+}
 
 // get grouping
 $grouping = "days";

@@ -9,6 +9,7 @@ var menu = {
 		    success: function(jsonData){
 		    	actualValues.values = jsonData.values;
 		    	menu.items = jsonData.menu;
+				menu.loggedin = jsonData.loggedin;
 				var $menu = $("<div></div>");
 				var $pages = $("<div><div id=\"chart_container\"><div id=\"step_chart\"></div><div id=\"line_chart\"></div><div id=\"minmax_chart\"></div></div><div id=\"energy_container\"><div id=\"bar_chart\"></div></div></div>");
 				$pages.find("#minmax_chart").hide();
@@ -57,6 +58,9 @@ var menu = {
 					}
 					$item.data(item);
 					$menu.append($item);
+					if(!item.view) {
+						$item.addClass("protected");
+					}
 				}
 
 				$menu.find("div.item").hover(function() {
@@ -84,10 +88,34 @@ var menu = {
 	},
 	display: function()
 	{
-		$("#browser").hide();
-		if(!$("div.item").is(":visible")) {
-			$("div.item").fadeIn('slow');
-		}	
+		$("div.item").hide();
+		if(menu.loggedin) {
+			if(!$("div.item").is(":visible")) {
+				$("div.item").fadeIn('slow');
+			}
+		}
+		else {
+			if(!$("div.item:not(.protected)").is(":visible")) {
+				$("div.item:not(.protected)").fadeIn('slow');
+			}
+		}
+		
+
+	},
+	login: function()
+	{
+		if(menu.selectedItem && menu.selectedItem["type"] == "line") {
+			toolbar.edit.show();
+		}
+		menu.loggedin = true;
+		$("div.item.protected").fadeIn('slow');
+	},
+	logout: function()
+	{
+		menu.loggedin = false;
+		toolbar.edit.hide();
+		$("div.item.protected").fadeOut('slow');
+		$("#indicator").fadeOut();
 	},
 	handle: function()
 	{
@@ -145,23 +173,33 @@ var menu = {
 		switch(menu.selectedItem["type"]) {
 			case "schema":
 				toolbar.hideDateNavigation();
-				actualValues.fetchData();
+				toolbar.showSlider();
+				actualValues.fetchData(actualValues.date);
+				toolbar.edit.hide();
 				break;
 			case "weather":
 				toolbar.hideDateNavigation();
+				toolbar.hideSlider();
 				menu.selectedItem.load(menu.selectedItem["schema"]);
+				toolbar.edit.hide();
 				break;
 			case "energy":
 				toolbar.showDateNavigation();
 				toolbar.showGrouping();
+				toolbar.hideSlider();
 				menu.selectedItem.load();
 				menu.selectedItem.table.getTable().appendTo("#pages");
+				toolbar.edit.hide();
 				break;
 			default:
 				toolbar.showDateNavigation();
 				toolbar.showPeriod();
+				toolbar.hideSlider();
 				menu.selectedItem.load();
 				menu.selectedItem.table.getTable().appendTo("#pages");
+				if(menu.loggedin) {
+					toolbar.edit.show();
+				}
 				break;
 		}
 	}
@@ -190,14 +228,20 @@ var weather =
 				menu.selectedItem["container"].find("span.weathertime").text(dateFormatter.formatValue(new Date(data.dt*1000)));
 				menu.selectedItem["container"].find("div.weathericon td.description").text(data.weather[0].description);
 				menu.selectedItem["container"].find("div.weathericon img").attr("src", "images/weather/"+data.weather[0].icon+".png");
-				menu.selectedItem["container"].find("div.weathericon span.temp.actuell").text(data.main.temp + " °C");
-				menu.selectedItem["container"].find("div.weathericon span.temp.max").text(data.main.temp_max + " °C");
-				menu.selectedItem["container"].find("div.weathericon span.temp.min").text(data.main.temp_min + " °C");
-				menu.selectedItem["container"].find("table td.weathervalue:eq(0)").text(data.main.temp + " °C");
+				menu.selectedItem["container"].find("div.weathericon span.temp.actuell").text(data.main.temp.toFixed(2) + " °C");
+				menu.selectedItem["container"].find("div.weathericon span.temp.max").text(data.main.temp_max.toFixed(2) + " °C");
+				menu.selectedItem["container"].find("div.weathericon span.temp.min").text(data.main.temp_min.toFixed(2) + " °C");
+				menu.selectedItem["container"].find("table td.weathervalue:eq(0)").text(data.main.temp.toFixed(2) + " °C");
 				menu.selectedItem["container"].find("table td.weathervalue:eq(1)").text(data.main.humidity + "%");
 				menu.selectedItem["container"].find("table td.weathervalue:eq(2)").text(data.clouds.all + "%");
 				menu.selectedItem["container"].find("table td.weathervalue:eq(3)").text(data.wind.speed + " km/h");
-				menu.selectedItem["container"].find("table td.weathervalue:eq(4)").text(data.rain["1h"] + " mm");
+				menu.selectedItem["container"].find("table td.weathervalue:eq(4)").text("0 mm");
+				if(data.rain) {
+					for(var value in data.rain) {
+						menu.selectedItem["container"].find("table td.weathervalue:eq(4)").text(data.rain[value] + " mm");
+						break;
+					}
+				}
 				menu.selectedItem["container"].find("table td.weathervalue:eq(5)").text(data.main.pressure + " mbar");
 				menu.selectedItem["container"].find("table td.weathervalue:eq(6)").text(timeFormatter.formatValue(new Date(data.sys.sunrise*1000)));
 				menu.selectedItem["container"].find("table td.weathervalue:eq(7)").text(timeFormatter.formatValue(new Date(data.sys.sunset*1000)));
@@ -209,22 +253,23 @@ var weather =
 
 var actualValues = 
 {
+	date: null,
 	init: function()
 	{
-		this.fetchData();
-		setTimeout(this.timer, 30000);
+		setTimeout(actualValues.timer, 30000);
 	},
-	fetchData: function()
+	fetchData: function(date)
 	{
+		actualValues.date = (typeof date !== 'undefined' ? date : null);
 		$.ajax({
-			url: "latest.php",
+			url: "latest.php" + (actualValues.date ? "?date="+actualValues.date : ""),
 			dataType:"json",
 			success: this.display
 		});
 	},
 	timer: function()
 	{
-		if(menu.selectedItem && menu.selectedItem["type"] == "schema")
+		if(menu.selectedItem && menu.selectedItem["type"] == "schema" && actualValues.date === null)
 		{
 			actualValues.fetchData();
 		}
@@ -236,7 +281,7 @@ var actualValues =
 			try{
 
 				var value = actualValues.values[i];
-				var text = value.format.replace(/((DIGITAL|MWH|KWH|MISCHER_AUF|MISCHER_ZU|VENTIL|DREHZAHL|ANIMATION|STATUS)\()?#\.?(#*)\)?/g, function(number,tmp,modifier,fractions) {
+				var text = value.format.replace(/((DIGITAL|MWH|KWH|MISCHER_AUF|MISCHER_ZU|VENTIL|DREHZAHL|GRADCOLOR|ANIMATION|STATUS)\()?#\.?(#*)\)?/g, function(number,tmp,modifier,fractions) {
 					switch(modifier) {
 						case "MISCHER_AUF":
 							return converter.mixerOn(data[value.frame][value.type]);
@@ -252,6 +297,10 @@ var actualValues =
 							return converter.kwh(data[value.frame][value.type]).toFixed(fractions.length);
 						case "DREHZAHL":
 							return converter.speed(data[value.frame][value.type]);
+						case "GRADCOLOR":
+							var color = converter.color(data[value.frame][value.type]);
+							$(value.path).attr("style","stop-color:"+color);
+							return null;
 						case "ANIMATION":
 							for(var i in $(value.path))
 							{
@@ -343,6 +392,34 @@ var converter = {
 			return 'ZU';
 		}
 	},
+	color: function(value)
+	{
+		var highColor = menu.selectedItem.options["high_color"];
+		var lowColor = menu.selectedItem.options["low_color"];
+		var highTemp = parseFloat(menu.selectedItem.options["high_temp"]);
+		var lowTemp = parseFloat(menu.selectedItem.options["low_temp"]);
+		if(value > highTemp) {
+			return highColor;
+		}
+		else if(value < lowTemp) {
+			return lowColor;
+		}
+		else {
+			var lr = parseInt("0x"+lowColor.substring(1,3));
+			var lg = parseInt("0x"+lowColor.substring(3,5));
+			var lb = parseInt("0x"+lowColor.substring(5,7));
+			var hr = parseInt("0x"+highColor.substring(1,3));
+			var hg = parseInt("0x"+highColor.substring(3,5));
+			var hb = parseInt("0x"+highColor.substring(5,7));
+			var cr = parseInt(lr + (hr-lr)*(value-lowTemp)/(highTemp-lowTemp)).toString(16);
+			var cg = parseInt(lg + (hg-lg)*(value-lowTemp)/(highTemp-lowTemp)).toString(16);
+			var cb = parseInt(lb + (hb-lb)*(value-lowTemp)/(highTemp-lowTemp)).toString(16);
+			cr = cr.length == 1 ? "0"+cr: cr;
+			cg = cg.length == 1 ? "0"+cg: cg;
+			cb = cb.length == 1 ? "0"+cb: cb;
+			return "#"+cr+cg+cb;
+		}
+        },
 	state: function(value)
 	{
 		return value;

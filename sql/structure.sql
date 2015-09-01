@@ -1,6 +1,27 @@
 CREATE DATABASE  IF NOT EXISTS `uvr1611`;
 USE `uvr1611`;
 
+DROP TABLE IF EXISTS `t_chartoptions`;
+CREATE TABLE `t_chartoptions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `chard_id` int(11) NOT NULL,
+  `property` varchar(120) NOT NULL,
+  `value` varchar(120) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `t_users`;
+CREATE TABLE `t_users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(128) NOT NULL,
+  `salt` varchar(128) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username_UNIQUE` (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+INSERT INTO `t_users` (`id`,`username`,`password`,`salt`) VALUES (0,'admin','40e2776165475d893e923da0fc9039569bad50e7f88e0ff07e11ad8bffd51019c7c0ab2709395c3599f4bebd6a6bd927e9c9470a638e1eef8e8cb971061d7412','80125411a211653c6b76a9c5b9b12b6406a4a53ab61543d31abf626cda4a58ba5c8d2411a5011ad2b61de2cecd07e02b6ec9ad7a2513299d977e34b5c3f76df0');
+
 DROP TABLE IF EXISTS `t_data`;
 CREATE TABLE `t_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -56,9 +77,10 @@ CREATE TABLE `t_menu` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   `unit` varchar(10) DEFAULT NULL,
-  `type` enum('schema','line','power','energy','weather') NOT NULL,
+  `type` varchar(20) NOT NULL,
   `order` tinyint(4) DEFAULT NULL,
   `schema` varchar(200) DEFAULT NULL,
+  `view` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -70,7 +92,6 @@ CREATE TABLE `t_schema` (
   `type` enum('analog1','analog2','analog3','analog4','analog5','analog6','analog7','analog8','analog9','analog10','analog11','analog12','analog13','analog14','analog15','analog16','digital1','digital2','digital3','digital4','digital5','digital6','digital7','digital8','digital9','digital10','digital11','digital12','digital13','digital14','digital15','digital16','speed1','speed2','speed3','speed4','energy1','energy2','power1','power2','current_energy1','current_energy2') NOT NULL,
   `format` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UNIQUE` (`frame`,`type`),
   KEY `index` (`frame`,`type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

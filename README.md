@@ -12,15 +12,15 @@ Die Features sind:
 * Ertragsdiagramme (Monats und Tagesgruppierung)
 * Zoomen in den Diagrammen
 * Übersichtstabellen zu den Diagrammen
+* Öffentliche und private Diagramme
 * Monatliche Trendwerte
+* Aktuelles Wetter
 
-Ein Beispiel der Anwendung befindet sich hier: [Demo](http://berwinter.dyndns.org/uvr1611/)
 
 Downloads
 ------
 
-* [Stable (v90)](https://github.com/berwinter/uvr1611/archive/v90.zip)
-* [Stable (v81)](https://github.com/berwinter/uvr1611/archive/v80.zip)
+* [Stable (v96)](https://github.com/berwinter/uvr1611/archive/v96.zip)
 * [Development](https://github.com/berwinter/uvr1611/archive/master.zip)
 
 Vorteile der Anwendung
@@ -67,6 +67,11 @@ Die Konfiguration des Datenloggers befindet sich in der Datei `config/config.ini
 
 In der Sektion `mysql` befinden sich die Parameter für den Zugang zur Datenbank. Der angebene Datenbank-Benutzer benötigt die Rechte `DELETE`, `EXECUTE`, `INSERT`, `SELECT`, `SHOW VIEW` und `UPDATE` für die Datebank. In der Sektion `uvr1611` befinden sich die IP-Adresse für den BL-NET. Mit dem Schalter `reset` kann das Löschen der Daten vom BL-NET nach dem Logging aktiviert werden. Der Bereich `app` legt Einstellungen zur Anwendung fest. Anwendung fest. Unter `name` kann der Eintrag „Solar/Heizungs Datenauswertung“ durch einen individuellen Eintrag ersetzt werden, ebenso der Eintrag unter `email`. `chartcache` und `latestcache` legen den Zeitraum in Sekunden fest, in dem keine neuen Daten vom Bootloader geholt werden. `reduction` reduziert die Daten in den Diagrammen um den angegebenen Faktor.
 
+Standort Wetter
+------
+
+In der Version v0.95 können aktuelle Wetterinformationen angezeigt werden. Dazu muss in der Datenbank in der Tabelle `t_menu` ein Eintrag vom Typ `weather` erstellt werden. In der Spalte `schema` ist der gewünschte Ort einzutragen. Die Daten werden von [openWeatherMap](http://openweathermap.org) abgerufen.
+
 Automatisches abrufen der Daten
 ------
 Damit die Daten automatisch vom BL-Net geholt werden, kann ein cron-Job mit folgendem Inhalt angelegt werden (z.B.: als `/etc/cron.hourly/uvr1611-logger`): 
@@ -77,6 +82,13 @@ Damit die Daten automatisch vom BL-Net geholt werden, kann ein cron-Job mit folg
 	
 Die Einrichtung des vorstehenden Beispiels  ist abhängig vom Betriebssystem des Servers und muss u.U. entsprechend angepasst werden. 
 Sollten die Daten auch weiterhin über Winsol ausgelesen werden ist zu beachten, dass bei der Löschung des Datenspeichers (aktiviert über Winsol und/oder Cron-Job) ggf. Datenverluste auftreten können. Hier muss ausprobiert werden, welche Einstellungen am besten geeignet sind.
+
+
+Login und Freigabe
+------
+
+Standardmäßig sind die Diagramme nur für angemeldete Benutzer sichtbar. Das Standard-Passwort ist `1234` und sollte unbedingt nach dem Setup durch Aufrufen des Scripts `changePassword.php` geändert werden. Die Berechtigungen für einzelne Charts können in der Tabelle `t_menu` angepasst werden. Dazu muss für das jeweilige Diagramm das Feld `view` auf `yes` gesetzt werden. Als angemeldeter Benutzer hat man auch die Möglichkeit die Diagramme direkt zu bearbeiten und Linien hinzuzufügen. 
+
 
 Anpassen der Anwendung
 ------
@@ -141,6 +153,8 @@ Screenshots
 ![Ertäge](./doc/balken.png)
 
 ![Ertäge (Monate)](./doc/balken2.png)
+
+![Wetter](./doc/weather.png)
 
 Kontakt
 ------

@@ -368,3 +368,7 @@ table.chartinfo div.timestamp {
 #mymain > a{
 	color: #444;
 }
+
+#dummy {
+	height: 55%;
+}

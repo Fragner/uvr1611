@@ -5,7 +5,9 @@
 	try {
 		$email = $config->app->email;
 	}
-	catch(Exception $ex) {}
+	catch(Exception $ex) {
+		echo "do hoats wos!";
+	}
 	$name = "";
 	try {
 		$name = $config->app->name;

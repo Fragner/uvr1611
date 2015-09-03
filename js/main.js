@@ -148,7 +148,7 @@ var menu = {
 					indicator.animate({'top':top});
 				}
 				indicator.animate({'left':left}, function() {
-					$("#logo").animate({'top':230,'left':230});
+					$("#logo").animate({'top':250,'left':230});
 					$("#menu").fadeOut();
 					$("body").animate({'background-color':'#FFF'});
 					$("#content").show().animate({'top':90}, function() {

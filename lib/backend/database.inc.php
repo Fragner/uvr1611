@@ -65,15 +65,37 @@ class Database
                  ."power1, power2, energy1, energy2,"
 				 ."RASMode1, RASMode2, RASMode3, RASMode4, RASMode5, RASMode6, RASMode7, RASMode8,"
 				 ."RASMode9, RASMode10, RASMode11, RASMode12, RASMode13, RASMode14, RASMode15, RASMode16)  VALUES ";
-		
+
 		$values = Array();
+
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "Start\n");
+
 		foreach ($data as $dataset) {
 			while ($frame = current($dataset)) {
+
+//$tempval = Array(); //delete array entries
+//$tempval[] = $this->getValuesFormDataset($frame, key($dataset));
+//$val = Array();
+//$val = explode (',',$tempval[0]);
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "tempval:\n".print_r($tempval)."\n", FILE_APPEND | LOCK_EX);
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "val:\n".print_r($val)."\n", FILE_APPEND | LOCK_EX);
+
+//				$values[] = $tempval;
 				$values[] = $this->getValuesFormDataset($frame, key($dataset));
 				next($dataset);
 			}
 		}
+//frama test
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "all values:\n ", FILE_APPEND | LOCK_EX);
+//file_put_contents("/mnt/RAMDisk/uvrData.log", json_encode($values), FILE_APPEND | LOCK_EX);
 //echo "dumpValues: ".var_dump($values)."\n";
+
+//$val = explode (',',$values[1]);
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "values[frame1]->analog1= ".$values["frame1"]->analog1."\n", FILE_APPEND | LOCK_EX);
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "values[]:\n".print_r($values, true)."\n", FILE_APPEND | LOCK_EX);
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "\nvalues[0]:\n".print_r($values[0], true)."\n", FILE_APPEND | LOCK_EX);
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "print_r:\n".print_r($data, true)."\n", FILE_APPEND | LOCK_EX);
+
 
 //		if ($values[frame] <> "0" ) {
 //			$this->logfile->writeLogError("database.inc.php - no Values available \n");
@@ -112,6 +134,11 @@ class Database
 	 */
 	private function getValuesFormDataset($data, $frame)
 	{
+
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "data->analog1= ".$data->analog1."\n", FILE_APPEND | LOCK_EX);
+//file_put_contents("/mnt/RAMDisk/uvrData.log", "frame= ".$frame."\n", FILE_APPEND | LOCK_EX);
+
+
 		return "('$data->date', '$frame',"
 		      ." $data->analog1, $data->analog2, $data->analog3, $data->analog4,"
 		      ." $data->analog5, $data->analog6, $data->analog7, $data->analog8,"
@@ -311,7 +338,8 @@ class Database
 			$sql .= " FROM t_energies AS datasets ";
 			$sql .= join(" ", $joins);
 			$sql .= " WHERE datasets.date < DATE_ADD(\"$date\",INTERVAL 1 DAY) ".
-					"AND datasets.date > DATE_SUB(\"$date\", INTERVAL 1 YEAR) ".
+//					"AND datasets.date > DATE_SUB(\"$date\", INTERVAL 1 YEAR) ".
+					"AND datasets.date > DATE_SUB(\"$date\", INTERVAL 18 MONTH) ".
 					"GROUP BY datasets.date";
 			$sql .= ") AS temp GROUP BY MONTH(temp.date), YEAR(temp.date) ORDER BY temp.date ASC;";
 		}

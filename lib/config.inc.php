@@ -37,7 +37,12 @@ class Config
         if (empty($options)) {
             $options = parse_ini_file(self::DEFAULT_CONFIG_FILE,true);
         }
-        $this->setConfig($options);
+		if ($options) {
+	        $this->setConfig($options);
+		}
+		else {
+			throw new Exception("config.ini not found.");
+		}
     }
  
     /**
@@ -66,4 +71,3 @@ class Config
         throw new Exception('call to undefined property: '.$name);
     }
 }
-    

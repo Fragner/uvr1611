@@ -5,8 +5,6 @@
  * @copyright  Copyright (c) Bertram Winter bertram.winter@gmail.com
  * @license    GPLv3 License
  */
-include_once("lib/backend/uvr1611.inc.php");
-include_once("lib/backend/database.inc.php");
 include_once("lib/backend/logfile.php");
 include_once("lib/config.inc.php");
 $logfile = LogFile::getInstance();
@@ -56,10 +54,13 @@ $logfile->writeLogInfo("commonChart.inc.php - check date!\n");
 // check if required date is today and last update is older than 10 minutes
 // -> so we need to fetch new values
 if($date == date("Y-m-d") && ($database->lastDataset() + Config::getInstance()->app->chartcache) < time()) {
+	try {
 		$logfile->writeLogInfo("commonChart.inc.php - date okay!\n");	
 		$uvr = Uvr1611::getInstance();
 		$data = Array();
 		$myCount = 0;
+		$count = $uvr->getCount();
+		$count = $uvr->startRead();
 if ($count > 0) {
 		$logfile->writeLogInfo("commonChart.inc.php - date okay - 2\n");			
 		$lastDatabaseValue = $database->lastDataset();
@@ -82,11 +83,6 @@ if ($count > 0) {
 		    }
 		}
 		$uvr->endRead();
-	}
-	catch(Exception $e) {
-		$uvr->endRead(false);
-		throw $e;
-	}
 		// insert all data into database
 		$database->insertData($data);
 		$database->updateTables();
@@ -101,6 +97,7 @@ if ($count > 0) {
 	}
 	}
 	catch (Exception $e) {
+		$uvr->endRead(false);
 		$logfile->writeLogError("commonChart.inc.php - exception: ".$e->getMessage()."\n");
 		echo "{'error':'".$e->getMessage()."'}";
 	}

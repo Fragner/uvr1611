@@ -369,8 +369,8 @@ var actualValues =
 	display: function(data)
 	{
 		for(var i in actualValues.values) {
-			try { 			
-				var value = actualValues.values[i];
+			var value = actualValues.values[i];
+try {
      			var text = value.format.replace(/((DIGITAL|MWH|KWH|MISCHER_AUF|MISCHER_ZU|VENTIL|DRAINBACK|DREHZAHL|GRADCOLOR|ANIMATION|STATUS)\()?#\.?(#*)\)?/g, function(number,tmp,modifier,fractions) {
      				switch(modifier) {
      					case "MISCHER_AUF":
@@ -436,17 +436,7 @@ var actualValues =
 				$(value.path).text(text);
      		}
 			
-			} catch (err){
-			;
-//			txt="There was an error on this page.\n\n";
-//			txt=+ value.frame + "mayby not in database";
-//			txt=+"\n\n";
-//			txt+="Error description: " + err.message + "\n\n";
-//			txt+="Click OK to continue.\n\n";
-			$(value.path).text("n.a.");			
-//				alert(txt);
-			}//end try
-		}//end for
+		}
 		$("#time").text(data["time"]);
 	}
 }

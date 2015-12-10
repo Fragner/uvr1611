@@ -76,12 +76,6 @@ class Database
 				$values[] = $this->getValuesFormDataset($frame, $key);
 			}
 		}
-//echo "dumpValues: ".var_dump($values)."\n";
-
-//		if ($values[frame] <> "0" ) {
-//			$this->logfile->writeLogError("database.inc.php - no Values available \n");
-//			$this->logfile->writeLogError("database.inc.php - insert in Database DENIED\n");
-//		}
 
 		$result = $this->mysqli->query($insert.join(',',$values));		
 		if ($result === TRUE) 
@@ -115,21 +109,21 @@ class Database
 	 */
 	private function getValuesFormDataset($data, $frame)
 	{
-		return "('$data->date', '$frame',"
-		      ." $data->analog1, $data->analog2, $data->analog3, $data->analog4,"
-		      ." $data->analog5, $data->analog6, $data->analog7, $data->analog8,"
-		      ." $data->analog9, $data->analog10, $data->analog11, $data->analog12,"
-		      ." $data->analog13, $data->analog14, $data->analog15, $data->analog16,"
-		      ." $data->digital1, $data->digital2, $data->digital3, $data->digital4,"
-		      ." $data->digital5, $data->digital6, $data->digital7, $data->digital8,"
-		      ." $data->digital9, $data->digital10, $data->digital11, $data->digital12,"
-		      ." $data->digital13, $data->digital14, $data->digital15, $data->digital16,"
-		      ." $data->speed1, $data->speed2, $data->speed3, $data->speed4,"
-		      ." $data->power1, $data->power2, $data->energy1, $data->energy2,"
-			  ." '$data->RASMode1',  '$data->RASMode2',  '$data->RASMode3',  '$data->RASMode4',"
-			  ." '$data->RASMode5',  '$data->RASMode6',  '$data->RASMode7',  '$data->RASMode8',"
-			  ." '$data->RASMode9',  '$data->RASMode10', '$data->RASMode11', '$data->RASMode12',"
-			  ." '$data->RASMode13', '$data->RASMode14', '$data->RASMode15', '$data->RASMode16')";
+		return "('$data[date]', '$frame',"
+		      ." $data[analog1], $data[analog2], $data[analog3], $data[analog4],"
+		      ." $data[analog5], $data[analog6], $data[analog7], $data[analog8],"
+		      ." $data[analog9], $data[analog10], $data[analog11], $data[analog12],"
+		      ." $data[analog13], $data[analog14], $data[analog15], $data[analog16],"
+		      ." $data[digital1], $data[digital2], $data[digital3], $data[digital4],"
+		      ." $data[digital5], $data[digital6], $data[digital7], $data[digital8],"
+		      ." $data[digital9], $data[digital10], $data[digital11], $data[digital12],"
+		      ." $data[digital13], $data[digital14], $data[digital15], $data[digital16],"
+		      ." $data[speed1], $data[speed2], $data[speed3], $data[speed4],"
+		      ." $data[power1], $data[power2], $data[energy1], $data[energy2],"
+			  ." '$data[RASMode1]',  '$data[RASMode2]',  '$data[RASMode3]',  '$data[RASMode4]',"
+			  ." '$data[RASMode5]',  '$data[RASMode6]',  '$data[RASMode7]',  '$data[RASMode8]',"
+			  ." '$data[RASMode9]',  '$data[RASMode10]', '$data[RASMode11]', '$data[RASMode12]',"
+			  ." '$data[RASMode13]', '$data[RASMode14]', '$data[RASMode15]', '$data[RASMode16]')";
 	}
 	
 	public function queryLatest($date)

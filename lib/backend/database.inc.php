@@ -8,6 +8,7 @@
  * @license    GPLv3 License
  */
 include_once("lib/config.inc.php");
+error_reporting(0);
 include_once("lib/backend/logfile.php");
 
 class Database
@@ -39,10 +40,13 @@ class Database
 	private function __construct()
 	{
 		$this->config = Config::getInstance();
-		$this->mysqli = new mysqli($this->config->mysql->server,
+		$this->mysqli = @new mysqli($this->config->mysql->server,
 								   $this->config->mysql->user,
 								   $this->config->mysql->password,
 								   $this->config->mysql->database);
+		if($this->mysqli->connect_errno) {
+			throw new Exception("Could not connect to database. Please check settings in config.ini.");
+		}
 		$this->mysqli->set_charset("utf8");
 		
 		//get instance off logger
@@ -68,9 +72,8 @@ class Database
 		
 		$values = Array();
 		foreach ($data as $dataset) {
-			while ($frame = current($dataset)) {
-				$values[] = $this->getValuesFormDataset($frame, key($dataset));
-				next($dataset);
+			foreach($dataset as $key => $frame) {
+				$values[] = $this->getValuesFormDataset($frame, $key);
 			}
 		}
 //echo "dumpValues: ".var_dump($values)."\n";
@@ -137,8 +140,14 @@ class Database
 			while($r = $result->fetch_array(MYSQL_ASSOC)) {
 				$rows[$r["frame"]] = $r;
 				$rows["time"] = date("H:i:s",strtotime($r["date"]));
+				$current_energy = self::getCurrentEnergy($r["frame"]);
+				$rows[$r["frame"]]["current_energy1"] = $current_energy[0];
+				$rows[$r["frame"]]["current_energy2"] = $current_energy[1];
 			}
 			$result->close();
+		}
+		else {
+			throw new Exception("Could not find any data in database.");
 		}
 		return $rows;
 	}
@@ -394,8 +403,14 @@ class Database
 //		$pikoframe = $this->config->piko->pikoframe;		
 //		$result = $this->mysqli->query("SELECT MAX(date) FROM t_data WHERE frame <> \"$pikoframe\";");	
 		$result = $this->mysqli->query("SELECT MAX(date) FROM t_data WHERE frame = 'frame1';");
+		if ($result) {
 		$last = $result->fetch_array();
 		$result->close();
+		}
+		else {
+			$last = array(0 => "2000-01-01");
+		}
+
 		return strtotime($last[0]);
 	}
 	
@@ -406,8 +421,14 @@ class Database
 	public function getCurrentEnergy($frame)
 	{
 		$result = $this->mysqli->query("SELECT energy1, energy2 FROM t_energies WHERE frame = '$frame' ORDER BY date DESC LIMIT 1;");
+		if ($result) {
 		$data = $result->fetch_array(MYSQLI_NUM);
 		$result->close();
+		}
+		else {
+			$data = array(0 => 0.0, 1 => 0.0);
+		}
+
 		return $data;
 	}
 	

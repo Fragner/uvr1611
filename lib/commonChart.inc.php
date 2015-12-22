@@ -7,6 +7,13 @@
  */
 include_once("lib/backend/logfile.php");
 include_once("lib/config.inc.php");
+$setUvr1611Data = false;
+if (is_file("/home/pi/scripts/uvr1611/setUvr1611Data.php"))
+{
+	$setUvr1611Data = true;
+	include_once("/home/pi/scripts/uvr1611/setUvr1611Data.php");	
+}
+
 $logfile = LogFile::getInstance();
 $logfile->writeLogInfo("commonChart.inc.php - start!\n");
 //get instance off logger
@@ -91,17 +98,52 @@ if ($count > 0) {
 		//additional debug info
 			$logfile->writeLogState("commonChart.inc.php - myCount:= ".$myCount." value of i:= ".$i."\n");
 		}
+		checkUvr1611State(1);
 	} else {
 		$logfile->writeLogError("commonChart.inc.php - getCount: $count \n");
-
+		checkUvr1611State(0);
 	}
 	}
 	catch (Exception $e) {
 		$uvr->endRead(false);
 		$logfile->writeLogError("commonChart.inc.php - exception: ".$e->getMessage()."\n");
 		echo "{'error':'".$e->getMessage()."'}";
+		checkUvr1611State(0);
 	}
 } 
 else {
 	$logfile->writeLogState("commonChart.inc.php - no entry in Database --> timegap too small\n");
+}
+
+function checkUvr1611State($stateOk=null){
+	global $setUvr1611Data;
+	$uvr1611StateLog = '/mnt/RAMDisk/uvr1611State';
+	$debug = 0;
+
+	if (!file_exists ( $uvr1611StateLog)) {
+		//create file with 'state' 0
+		file_put_contents($uvr1611StateLog, 0);	
+	}
+	if ($stateOk) {
+		//state is 1 --> data received, reset file content	
+		file_put_contents($uvr1611StateLog, 0);
+	} else {
+		$content = file_get_contents($uvr1611StateLog);
+		if ($content > 2) {
+			if ($setUvr1611Data) {
+				restartBL_Net();//setUvr1611Data.php
+				$logfile->writeLogState("commonChart.inc.php - restart BL-Net\n");			
+				//reset file content
+				file_put_contents($uvr1611StateLog, 0);
+			}
+		} else {
+			//increase counter
+			$content ++;
+			file_put_contents($uvr1611StateLog, $content);		
+		}
+	} 
+
+	if ($debug) {
+		echo "Content of ".$uvr1611StateLog." = ".file_get_contents($uvr1611StateLog)."\n";	
+	}	
 }

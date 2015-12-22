@@ -18,7 +18,7 @@ $logfile = LogFile::getInstance();
 $logfile->writeLogInfo("commonChart.inc.php - start!\n");
 //get instance off logger
 
-include_once("/var/www/myUvr1611DataLogger/lib/backend/uvr1611-connection.inc.php");
+include_once("/var/www/myUvr1611DataLogger/lib/backend/uvr1611.inc.php");
 include_once("/var/www/myUvr1611DataLogger/lib/backend/database.inc.php");
 date_default_timezone_set("Europe/Berlin");
 
@@ -65,11 +65,12 @@ if($date == date("Y-m-d") && ($database->lastDataset() + Config::getInstance()->
 		$logfile->writeLogInfo("commonChart.inc.php - date okay!\n");	
 		$uvr = Uvr1611::getInstance();
 		$data = Array();
+                $lastDatabaseValue = $database->lastDataset()
 	  try {
 		$count = $uvr->startRead();
 if ($count > 0) {
 		$logfile->writeLogInfo("commonChart.inc.php - date okay - 2\n");			
-		$lastDatabaseValue = $database->lastDataset();
+		;
 
 		$logfile->writeLogInfo("commonChart.inc.php - date okay - 3\n");					
 		for($i=0; $i < $count; $i++) {

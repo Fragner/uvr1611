@@ -370,7 +370,7 @@ var actualValues =
 	{
 		for(var i in actualValues.values) {
 			var value = actualValues.values[i];
-try {
+			try {
      			var text = value.format.replace(/((DIGITAL|MWH|KWH|MISCHER_AUF|MISCHER_ZU|VENTIL|DRAINBACK|DREHZAHL|GRADCOLOR|ANIMATION|STATUS)\()?#\.?(#*)\)?/g, function(number,tmp,modifier,fractions) {
      				switch(modifier) {
      					case "MISCHER_AUF":

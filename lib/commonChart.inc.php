@@ -65,8 +65,8 @@ if($date == date("Y-m-d") && ($database->lastDataset() + Config::getInstance()->
 		$logfile->writeLogInfo("commonChart.inc.php - date okay!\n");	
 		$uvr = Uvr1611::getInstance();
 		$data = Array();
-                $lastDatabaseValue = $database->lastDataset()
-	  try {
+	        $lastDatabaseValue = $database->lastDataset();
+		try {
 		$count = $uvr->startRead();
 if ($count > 0) {
 		$logfile->writeLogInfo("commonChart.inc.php - date okay - 2\n");			

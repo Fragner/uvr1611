@@ -149,8 +149,8 @@ var lineChart = {
 			this.options.vAxis.format = menu.selectedItem["unit"];
 			this.options.hAxis.format = toolbar.getPeriod() == "day" ? "HH:mm": "dd.MM";
 			// set viewbox
-			//this.options.hAxis.viewWindow = {min:this.json.analog[0][0], max:this.json.analog[this.json.analog.length-1][0]};
-			this.options.hAxis.viewWindow = {min: this.startDate, max: this.endDate};
+			this.options.hAxis.viewWindow = {min:this.json.analog[0][0], max:this.json.analog[this.json.analog.length-1][0]};
+			//this.options.hAxis.viewWindow = {min: this.startDate, max: this.endDate};
 			// fill table with information
 			menu.selectedItem.table.fill(table, this.options.vAxis.format);
 			this.chart.draw(this.data.analogView, this.options);
@@ -170,8 +170,8 @@ var lineChart = {
 				}
 			}
 			this.data.digital.sort([{column: 0}]);
-			//this.digitalOptions.hAxis.viewWindow = {min:this.json.digital[0][0], max:this.json.digital[this.json.digital.length-1][0]};
-			this.digitalOptions.hAxis.viewWindow = {min:this.startDate, max:this.endDate};
+			this.digitalOptions.hAxis.viewWindow = {min:this.json.digital[0][0], max:this.json.digital[this.json.digital.length-1][0]};
+			//this.digitalOptions.hAxis.viewWindow = {min:this.startDate, max:this.endDate};
 			this.digitalOptions.height = this.json.digital[0].length*40;
 			this.digitalOptions.vAxis.gridlines = {count:this.json.digital[0].length};
 			this.digitalOptions.vAxis.maxValue = (this.json.digital[0].length-1)*1;
@@ -216,13 +216,17 @@ var lineChart = {
 		if(e.targetID == "chartarea" && lineChart.zoomed) {
 			if(lineChart.json.analog[0] && lineChart.json.analog[0][1] != null){
 				lineChart.options.hAxis.format = toolbar.getPeriod() == "day" ? "HH:mm": "dd.MM";
-				lineChart.options.hAxis.viewWindow.min = lineChart.startDate;
-				lineChart.options.hAxis.viewWindow.max = lineChart.endDate;
+				lineChart.options.hAxis.viewWindow.min = lineChart.json.analog[0][0];
+				lineChart.options.hAxis.viewWindow.max = lineChart.json.analog[lineChart.json.analog.length-1][0];				
+//				lineChart.options.hAxis.viewWindow.min = lineChart.startDate;
+//				lineChart.options.hAxis.viewWindow.max = lineChart.endDate;
 				lineChart.chart.draw(lineChart.data.analogView, lineChart.options);
 			}
 			if(lineChart.json.digital[0] && lineChart.json.digital[0][1] != null){
-				lineChart.digitalOptions.hAxis.viewWindow.min = lineChart.startDate;
-				lineChart.digitalOptions.hAxis.viewWindow.max = lineChart.endDate;
+				lineChart.digitalOptions.hAxis.viewWindow.min = lineChart.json.analog[0][0];
+				lineChart.digitalOptions.hAxis.viewWindow.max = lineChart.json.analog[lineChart.json.analog.length-1][0];				
+//				lineChart.digitalOptions.hAxis.viewWindow.min = lineChart.startDate;
+//				lineChart.digitalOptions.hAxis.viewWindow.max = lineChart.endDate;
 				lineChart.digitalChart.draw(lineChart.data.digital, lineChart.digitalOptions);
 			}
 			lineChart.zoomed = false;

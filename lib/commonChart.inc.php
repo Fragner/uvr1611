@@ -117,7 +117,7 @@ else {
 }
 
 function checkUvr1611State($stateOk=null){
-	global $setUvr1611Data;
+	global $setUvr1611Data, $logfile;
 	$uvr1611StateLog = '/mnt/RAMDisk/uvr1611State';
 	$debug = 0;
 

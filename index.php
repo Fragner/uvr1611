@@ -21,11 +21,11 @@
   <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>UVR1611/Piko Data Logger</title>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>	
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/datepicker.de.js"></script>
-    <script type="text/javascript" src="js/charts.js"></script>
+    <script type="text/javascript" src="js/charts.js"></script>	
     <script type="text/javascript" src="js/toolbar.js"></script>
     <script type="text/javascript" src="js/table.js"></script>
     <script type="text/javascript" src="js/main.js"></script>

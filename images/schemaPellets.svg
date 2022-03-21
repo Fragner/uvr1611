@@ -130,9 +130,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.5"
-     inkscape:cx="283.89934"
-     inkscape:cy="13.818594"
+     inkscape:zoom="1.9767424"
+     inkscape:cx="433.92772"
+     inkscape:cy="321.93853"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1256,5 +1256,36 @@
        d="m 282.8047,388.46312 v 188.6227 h 153.7477"
        id="path4769"
        inkscape:connector-curvature="0" />
+    <g
+       style="opacity:1"
+       id="g5355-5-0-4"
+       transform="rotate(180,481.75072,367.54722)">
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5352-2-9-8"
+         d="m 354.41521,342.2341 h 10.36272"
+         style="fill:none;stroke:#000000;stroke-width:5.1727953;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <circle
+         transform="translate(43.748349,-92.676613)"
+         id="path5350-7-5-2"
+         style="fill:#ff9000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         cx="310.11682"
+         cy="434.84006"
+         r="4.0406103" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00000012"
+       x="618.9519"
+       y="398.89026"
+       id="rl_hzkr"
+       inkscape:label="#rl_hzkr"><title
+         id="title3413-6">Rücklauftemperatur Heizkreis</title><tspan
+         sodipodi:role="line"
+         id="tspan6149-8-0-5-7-1"
+         x="618.9519"
+         y="398.89026"
+         style="font-style:oblique;font-size:14px;line-height:1.25;-inkscape-font-specification:'Sans Oblique';text-align:start;text-anchor:start;stroke-width:1.00000012">? °C</tspan></text>
   </g>
 </svg>

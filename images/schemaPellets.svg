@@ -132,7 +132,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.9767424"
      inkscape:cx="433.92772"
-     inkscape:cy="321.93853"
+     inkscape:cy="207.47109"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -150,8 +150,8 @@
      inkscape:snap-nodes="false"
      inkscape:window-width="2560"
      inkscape:window-height="1377"
-     inkscape:window-x="1196"
-     inkscape:window-y="200"
+     inkscape:window-x="1436"
+     inkscape:window-y="636"
      inkscape:window-maximized="1"
      inkscape:snap-global="false">
     <inkscape:grid
@@ -240,40 +240,6 @@
     <g
        id="g5355-3"
        transform="rotate(180,555.975,399.16985)" />
-    <g
-       id="g5355-9"
-       transform="translate(282.94193,170.05084)">
-      <path
-         sodipodi:nodetypes="cc"
-         inkscape:connector-curvature="0"
-         id="path5352-8"
-         d="m 354.41521,342.2341 h 10.36272"
-         style="fill:none;stroke:#000000;stroke-width:5.1727953;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <circle
-         transform="translate(43.748349,-92.676613)"
-         id="path5350-2"
-         style="fill:#ff9000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         cx="310.11682"
-         cy="434.84006"
-         r="4.0406103" />
-    </g>
-    <g
-       id="g5355"
-       transform="translate(69.49197,169.94217)">
-      <path
-         sodipodi:nodetypes="cc"
-         inkscape:connector-curvature="0"
-         id="path5352"
-         d="m 354.41521,342.2341 h 10.36272"
-         style="fill:none;stroke:#000000;stroke-width:5.1727953;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <circle
-         transform="translate(43.748349,-92.676613)"
-         id="path5350"
-         style="fill:#ff9000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         cx="310.11682"
-         cy="434.84006"
-         r="4.0406103" />
-    </g>
     <g
        id="g5355-9-4"
        transform="rotate(180,287.66698,441.67632)">
@@ -769,31 +735,6 @@
          style="font-style:oblique;font-size:14px;line-height:1.25;-inkscape-font-specification:'Sans Oblique'">? °C</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;line-height:0%;font-family:Arial;text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none"
-       x="430.28967"
-       y="503.11636"
-       id="speicher1_mitte"
-       inkscape:label="#speicher1_mitte"><title
-         id="title3425">Speicher Mitte</title><tspan
-         sodipodi:role="line"
-         id="tspan6149-8"
-         x="430.28967"
-         y="503.11636"
-         style="font-style:oblique;font-size:14px;line-height:1.25;-inkscape-font-specification:'Sans Oblique';text-align:end;text-anchor:end">? °C</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:oblique;font-weight:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Sans Oblique';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none"
-       x="646.66101"
-       y="502.89172"
-       id="speicher_Solar2"><title
-         id="title3423">Speicher Solar 2</title><tspan
-         sodipodi:role="line"
-         id="tspan6149-0"
-         x="646.66101"
-         y="502.89172"
-         style="font-size:14px;line-height:1.25">? °C</tspan></text>
-    <text
-       xml:space="preserve"
        style="font-style:oblique;font-weight:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Sans Oblique';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
        x="742.57733"
        y="91.770119"
@@ -1080,7 +1021,7 @@
          id="tspan6122-5-4"
          x="775"
          y="596.21356"
-         style="font-size:14px;line-height:1.25">Letzte Aktuallisierung</tspan></text>
+         style="font-size:14px;line-height:1.25">Letzte Aktualisierung</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:oblique;font-weight:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Sans Oblique';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
@@ -1247,15 +1188,17 @@
          y="580.05396"
          style="font-size:18px;line-height:125%">Kessel</tspan></text>
     <path
-       style="fill:none;stroke:#005cff;stroke-width:4.68750006;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-       d="m 211.92857,610.83929 165,0.375 -0.375,-76.5 59.625,0"
+       style="fill:none;fill-opacity:1;stroke:#005cff;stroke-width:4.6875;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 212.40284,611.31356 165,0.375 0.0993,-50.88968 59.625,-0.47427"
        id="path4759"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;fill-opacity:1;stroke:#005cff;stroke-width:4.69210291;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 282.8047,388.46312 v 188.6227 h 153.7477"
+       d="m 282.8047,388.46312 0.94853,207.11904 153.7477,0.94853"
        id="path4769"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
     <g
        style="opacity:1"
        id="g5355-5-0-4"
@@ -1286,6 +1229,140 @@
          id="tspan6149-8-0-5-7-1"
          x="618.9519"
          y="398.89026"
+         style="font-style:oblique;font-size:14px;line-height:1.25;-inkscape-font-specification:'Sans Oblique';text-align:start;text-anchor:start;stroke-width:1.00000012">? °C</tspan></text>
+    <g
+       style="opacity:1"
+       id="g5355-7"
+       transform="rotate(180,451.02752,451.12113)">
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5352-3"
+         d="m 354.41521,342.2341 h 10.36272"
+         style="fill:none;stroke:#000000;stroke-width:5.1727953;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <circle
+         transform="translate(43.748349,-92.676613)"
+         id="path5350-8"
+         style="fill:#ff9000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         cx="310.11682"
+         cy="434.84006"
+         r="4.0406103" />
+    </g>
+    <g
+       style="opacity:1"
+       id="g5355-7-9"
+       transform="rotate(180,451.04754,424.69616)">
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5352-3-9"
+         d="m 354.41521,342.2341 h 10.36272"
+         style="fill:none;stroke:#000000;stroke-width:5.1727953;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <circle
+         transform="translate(43.748349,-92.676613)"
+         id="path5350-8-9"
+         style="fill:#ff9000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         cx="310.11682"
+         cy="434.84006"
+         r="4.0406103" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:Arial;text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00000012"
+       x="649.19586"
+       y="447.73956"
+       id="Speicher_Oben"
+       inkscape:label="#Speicher_Oben"><title
+         id="title3425-7-9">Speicher Oben (E12)</title><tspan
+         sodipodi:role="line"
+         id="tspan6149-8-9-22"
+         x="649.19586"
+         y="447.73956"
+         style="font-style:oblique;font-size:14px;line-height:1.25;-inkscape-font-specification:'Sans Oblique';text-align:end;text-anchor:end;stroke-width:1.00000012">? °C</tspan></text>
+    <g
+       style="opacity:1"
+       id="g5355-7-5"
+       transform="translate(282.3456,112.42199)">
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5352-3-4"
+         d="m 354.41521,342.2341 h 10.36272"
+         style="fill:none;stroke:#000000;stroke-width:5.1727953;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <circle
+         transform="translate(43.748349,-92.676613)"
+         id="path5350-8-5"
+         style="fill:#ff9000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         cx="310.11682"
+         cy="434.84006"
+         r="4.0406103" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:37.5px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.9375"
+       x="868.35571"
+       y="635.7547"
+       id="text5348"><tspan
+         sodipodi:role="line"
+         id="tspan5346"
+         x="868.35571"
+         y="635.7547"
+         style="font-size:7.5px;stroke-width:0.9375">Vers 1.1</tspan></text>
+    <g
+       style="opacity:1"
+       id="g5355-7-0"
+       transform="rotate(180,450.92349,472.59694)">
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5352-3-0"
+         d="m 354.41521,342.2341 h 10.36272"
+         style="fill:none;stroke:#000000;stroke-width:5.1727953;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <circle
+         transform="translate(43.748349,-92.676613)"
+         id="path5350-8-6"
+         style="fill:#ff9000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         cx="310.11682"
+         cy="434.84006"
+         r="4.0406103" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00000012"
+       x="539.74963"
+       y="553.50067"
+       id="Speicher1_HZKr"
+       inkscape:label="#Speicher1_HZKr"><title
+         id="title3413-0">Speicher Heizkreise (S10)</title><tspan
+         sodipodi:role="line"
+         id="tspan6149-8-0-5-7-2"
+         x="539.74963"
+         y="553.50067"
+         style="font-style:oblique;font-size:14px;line-height:1.25;-inkscape-font-specification:'Sans Oblique';text-align:start;text-anchor:start;stroke-width:1.00000012">? °C</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00000012"
+       x="538.80109"
+       y="500.85724"
+       id="Speicher1_WW"><title
+         id="title3413-0-4">Speicher Warmwasser (S2)</title><tspan
+         sodipodi:role="line"
+         id="tspan6149-8-0-5-7-2-6"
+         x="538.80109"
+         y="500.85724"
+         style="font-style:oblique;font-size:14px;line-height:1.25;-inkscape-font-specification:'Sans Oblique';text-align:start;text-anchor:start;stroke-width:1.00000012">? °C</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00000012"
+       x="539.27533"
+       y="595.23608"
+       id="Speicher1_unten"
+       inkscape:label="#Speicher1_unten"><title
+         id="title3413-0-5">Speicher unten (S11)</title><tspan
+         sodipodi:role="line"
+         id="tspan6149-8-0-5-7-2-9"
+         x="539.27533"
+         y="595.23608"
          style="font-style:oblique;font-size:14px;line-height:1.25;-inkscape-font-specification:'Sans Oblique';text-align:start;text-anchor:start;stroke-width:1.00000012">? °C</tspan></text>
   </g>
 </svg>

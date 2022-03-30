@@ -65,7 +65,7 @@ var lineChart = {
 	draw: function()
 	{
 		var table = [];
-		var columns = [0]; 
+		var columns = [0];
 		this.data = {};
 		this.data.analog = new google.visualization.DataTable();
 		this.data.analogView = new google.visualization.DataView(this.data.analog);
@@ -74,34 +74,34 @@ var lineChart = {
 		this.data.analog.addColumn('datetime', 'Time');
 		this.data.digital.addColumn('datetime', 'Time');
 		var cols = menu.selectedItem["columns"];
-		
+
 		this.json.digital = [];
 		this.json.analog = [];
-		
-		for ( var i = 0; i < this.json.length; i++ ) { 
+
+		for ( var i = 0; i < this.json.length; i++ ) {
 			this.json.digital[i] = [];
 			this.json.analog[i] = [];
 			this.json.digital[i][0] = new Date(this.json[i][0]*1000);
 			this.json.analog[i][0] = new Date(this.json[i][0]*1000);
 		}
-		
+
 		for (var i in cols.analog) {
 			this.data.analog.addColumn('number', cols.analog[i].name);
 			columns.push(columns.length);
 			var tableRow = {min:{value:null},max:{value:null},avg:{value:0}};
-			for (var j = 0; j < this.json.length; j++ ) { 
+			for (var j = 0; j < this.json.length; j++ ) {
 				var value = this.json[j][cols.analog[i].index];
 				this.json.analog[j].push(value);
 				if(tableRow.min.value == null || value < tableRow.min.value) {
 					tableRow.min.value = value;
-					tableRow.min.time = this.json.analog[j][0];	
-					tableRow.min.row = j;	
+					tableRow.min.time = this.json.analog[j][0];
+					tableRow.min.row = j;
 					tableRow.min.column = this.json.analog[j].length-1;
 				}
 				if(tableRow.max.value == null || value > tableRow.max.value) {
 					tableRow.max.value = value;
 					tableRow.max.time = this.json.analog[j][0];
-					tableRow.max.row = j;	
+					tableRow.max.row = j;
 					tableRow.max.column = this.json.analog[j].length-1;
 				}
 				tableRow.avg.value += value;
@@ -110,9 +110,8 @@ var lineChart = {
 			table.push(tableRow);
 		}
 
-
+		this.options.series = {};
 		if (menu.selectedItem.options) {
-			this.options.series = {};
 			if(menu.selectedItem.options["low_threshold"]) {
 				this.options.series[columns.length-1] = {color: '#888', lineDashStyle: [4, 4],visibleInLegend: false, enableInteractivity: false};
 				columns.push({type:'number', calc: function() { return parseFloat(menu.selectedItem.options["low_threshold"]);}});
@@ -127,7 +126,7 @@ var lineChart = {
 		for (var i in cols.digital) {
 			this.data.digital.addColumn('number', cols.digital[i].name);
 			var lastValue;
-			for ( var j = 0; j < this.json.length; j++ ) { 
+			for ( var j = 0; j < this.json.length; j++ ) {
 				var value = this.json[j][cols.digital[i].index];
 				this.json.digital[j].push({v:value*0.7+(this.json.digital[j].length-1)*1, f:(value?"EIN":"AUS")});
 				if(value != lastValue & j>0) {
@@ -136,10 +135,10 @@ var lineChart = {
 				}
 			}
 		}
-		// set diagram start and end date	
-		var tempDate = new Date(toolbar.date.getFullYear() + "-" + (toolbar.date.getMonth() + 1) + "-" + toolbar.date.getDate());
-		this.startDate = (toolbar.getPeriod() == "day" ? new Date(tempDate.getTime()+tempDate.getTimezoneOffset()*60*1000) : new Date(tempDate.getTime() - 6*24*60*60*1000+tempDate.getTimezoneOffset()*60*1000));
-		this.endDate = new Date(this.startDate.getTime() + (toolbar.getPeriod() == "day" ? 24*60*60*1000: 7*24*60*60*1000)+1);
+		// set diagram start and end date
+		var tempDate = new Date(toolbar.date.getFullYear(), toolbar.date.getMonth(), toolbar.date.getDate());
+		this.startDate = new Date(tempDate.getTime() + 86400000 - toolbar.timeInc);
+		this.endDate = new Date(this.startDate.getTime() + toolbar.timeInc + 1);
 		// check if there is data
 		if(this.json.analog[0] && this.json.analog[0][1] != null){
 			$("#line_chart").show();
@@ -149,8 +148,8 @@ var lineChart = {
 			this.options.vAxis.format = menu.selectedItem["unit"];
 			this.options.hAxis.format = toolbar.getPeriod() == "day" ? "HH:mm": "dd.MM";
 			// set viewbox
-			this.options.hAxis.viewWindow = {min:this.json.analog[0][0], max:this.json.analog[this.json.analog.length-1][0]};
-			//this.options.hAxis.viewWindow = {min: this.startDate, max: this.endDate};
+			//this.options.hAxis.viewWindow = {min:this.json.analog[0][0], max:this.json.analog[this.json.analog.length-1][0]};
+			this.options.hAxis.viewWindow = {min: this.startDate, max: this.endDate};
 			// fill table with information
 			menu.selectedItem.table.fill(table, this.options.vAxis.format);
 			this.chart.draw(this.data.analogView, this.options);
@@ -170,8 +169,8 @@ var lineChart = {
 				}
 			}
 			this.data.digital.sort([{column: 0}]);
-			this.digitalOptions.hAxis.viewWindow = {min:this.json.digital[0][0], max:this.json.digital[this.json.digital.length-1][0]};
-			//this.digitalOptions.hAxis.viewWindow = {min:this.startDate, max:this.endDate};
+			//this.digitalOptions.hAxis.viewWindow = {min:this.json.digital[0][0], max:this.json.digital[this.json.digital.length-1][0]};
+			this.digitalOptions.hAxis.viewWindow = {min:this.startDate, max:this.endDate};
 			this.digitalOptions.height = this.json.digital[0].length*40;
 			this.digitalOptions.vAxis.gridlines = {count:this.json.digital[0].length};
 			this.digitalOptions.vAxis.maxValue = (this.json.digital[0].length-1)*1;
@@ -180,7 +179,7 @@ var lineChart = {
 		else {
 			$("#step_chart").hide();
 		}
-		
+
 		this.zoomed = false;
 
 	},
@@ -216,17 +215,13 @@ var lineChart = {
 		if(e.targetID == "chartarea" && lineChart.zoomed) {
 			if(lineChart.json.analog[0] && lineChart.json.analog[0][1] != null){
 				lineChart.options.hAxis.format = toolbar.getPeriod() == "day" ? "HH:mm": "dd.MM";
-				lineChart.options.hAxis.viewWindow.min = lineChart.json.analog[0][0];
-				lineChart.options.hAxis.viewWindow.max = lineChart.json.analog[lineChart.json.analog.length-1][0];				
-//				lineChart.options.hAxis.viewWindow.min = lineChart.startDate;
-//				lineChart.options.hAxis.viewWindow.max = lineChart.endDate;
+				lineChart.options.hAxis.viewWindow.min = lineChart.startDate;
+				lineChart.options.hAxis.viewWindow.max = lineChart.endDate;
 				lineChart.chart.draw(lineChart.data.analogView, lineChart.options);
 			}
 			if(lineChart.json.digital[0] && lineChart.json.digital[0][1] != null){
-				lineChart.digitalOptions.hAxis.viewWindow.min = lineChart.json.analog[0][0];
-				lineChart.digitalOptions.hAxis.viewWindow.max = lineChart.json.analog[lineChart.json.analog.length-1][0];				
-//				lineChart.digitalOptions.hAxis.viewWindow.min = lineChart.startDate;
-//				lineChart.digitalOptions.hAxis.viewWindow.max = lineChart.endDate;
+				lineChart.digitalOptions.hAxis.viewWindow.min = lineChart.startDate;
+				lineChart.digitalOptions.hAxis.viewWindow.max = lineChart.endDate;
 				lineChart.digitalChart.draw(lineChart.data.digital, lineChart.digitalOptions);
 			}
 			lineChart.zoomed = false;
@@ -285,16 +280,16 @@ var barChart = {
 	{
 		var data = new google.visualization.DataTable();
 		data.addColumn('string', 'Date');
-		
+
 		var cols = menu.selectedItem["columns"].analog;
 		var table = {};
-		
+
 		for (var i in cols)
 		{
 			data.addColumn('number', cols[i].name);
 			table[i] = this.json.statistics[cols[i].frame][cols[i].type];
 		}
-		
+
 		menu.selectedItem.table.fill(table, this.options.vAxis.format);
 		data.addRows(this.json.rows);
 		this.chart.draw(data, this.options);
@@ -319,13 +314,14 @@ var minmaxChart = {
 			this.chart = new google.visualization.LineChart(document.getElementById('minmax_chart'));
 		},
 		fetch: function(line)
-		{		
+		{
 			$.ajax({
 				url: "minmaxChart.php",
 				data: {
 					date: (toolbar.date.getFullYear() + "-" + (toolbar.date.getMonth() + 1) + "-" + toolbar.date.getDate()),
 					type: menu.selectedItem.columns.analog[line].type,
-					frame: menu.selectedItem.columns.analog[line].frame
+					frame: menu.selectedItem.columns.analog[line].frame,
+					logger: menu.selectedItem.columns.analog[line].logger
 				},
 				dataType:"json",
 				timeout: 120000,
@@ -358,13 +354,13 @@ var minmaxChart = {
 			this.data.addColumn('number', 'Minimum '+menu.selectedItem.columns.analog[line].name);
 			this.data.addColumn('number', 'Maximum '+menu.selectedItem.columns.analog[line].name);
 			// format date
-			for ( var i = 0; i < this.json.length; i++ ) { 
+			for ( var i = 0; i < this.json.length; i++ ) {
 				this.json[i][0] = new Date(this.json[i][0]*1000);
 			}
-			
-			this.data.addRows(this.json);	
+
+			this.data.addRows(this.json);
 			// set unit
-			this.options.vAxis.format = menu.selectedItem["unit"];		
+			this.options.vAxis.format = menu.selectedItem["unit"];
 			this.chart.draw(this.data, this.options);
 		}
 	}

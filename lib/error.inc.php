@@ -19,6 +19,7 @@ function sendAjaxError($e){
 		$error["stacktrace"] = $e->getTraceAsString();
 	}
 	$error["message"] = $e->getMessage();
+	file_put_contents("/mnt/RAMDisk/error.inc.log",json_encode($error));//frama
 	echo json_encode($error);
 	exit();
 }

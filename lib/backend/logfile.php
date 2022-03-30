@@ -17,7 +17,8 @@ class LogFile
 	* @access private
 	*/
 	var $m_handle;
-	public static $s_message;
+	//public static $s_message;
+	var $s_message;
 	
 	/**
 	 *  Singleton Interface

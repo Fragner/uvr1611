@@ -367,25 +367,11 @@ var actualValues =
 		setTimeout(actualValues.timer, 30000);
 	},
 	display: function(data)
-	{
-	
-	var length = 0;
-	for(var k in data){
-		if(data.hasOwnProperty(k)){
-			length++;
-			break;
-		} 
-	} 
-	
-	
-		
+	{	
 		for(var i in actualValues.values) {
 			var value = actualValues.values[i];		
 			try {
-     			var text = value.format.replace(/((DIGITAL|MWH|KWH|MISCHER_AUF|MISCHER_ZU|VENTIL|DRAINBACK|DREHZAHL|GRADCOLOR|ANIMATION|STATUS)\()?#\.?(#*)\)?/g, function(number,tmp,modifier,fractions) {
-					
-					if (length == 0) return "ERROR: data not valid";	
-					
+     			var text = value.format.replace(/((DIGITAL|MWH|KWH|MISCHER_AUF|MISCHER_ZU|VENTIL|DRAINBACK|DREHZAHL|GRADCOLOR|ANIMATION|STATUS)\()?#\.?(#*)\)?/g, function(number,tmp,modifier,fractions) {					
      				switch(modifier) {
      					case "MISCHER_AUF":
      						return converter.mixerOn(data[value.frame][value.type]);

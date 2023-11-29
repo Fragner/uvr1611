@@ -48,7 +48,7 @@ function create_pid()
 			exec("kill $pid");
 		}
 		else {
-			throw new Exception("Another process is accessing the bl-net.");
+			throw new Exception("Another process is accessing the bl-net. (create_pid)");
 		}
 
 	}

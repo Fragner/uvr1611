@@ -15,14 +15,12 @@ if (PHP_SAPI === 'cli'){
 
 try {
 	header('Cache-Control: no-cache, must-revalidate');
-	header('Expires: Mon, 26 Jul 2023 05:00:00 GMT');
+	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');// date in the past --> don't cache the file
 	header('Content-type: application/json; charset=utf-8');
-	
-	$config = Config::getInstance();
 
+	$config = Config::getInstance();
 	$now = time();
 	$date = isset($_GET["date"]) ? $_GET["date"] : $now;
-
 //		$database = Database::getInstance();
 //		echo json_encode($database->queryLatest($date));
 //return;
@@ -35,14 +33,13 @@ try {
 	else
 	{
 		$data = load_cache("uvr1611_latest", $config->app->latestcache);
-
 		if(!$data)
 		{
 			$uvr = Uvr1611::getInstance();
 			$latest = $uvr->getLatest();
 			$latest["info"]["cached"] = false;
-        	 //PIKO
-		        getPikoData();
+        	//PIKO
+		    getPikoData();
 			$data = json_encode($latest);
 			save_cache($latest,"uvr1611_latest");
 		}

@@ -13,8 +13,7 @@ class Config
 	/**
 	 * Config location constant
 	 */
-//    const DEFAULT_CONFIG_FILE = "C:/Users/01111635/Documents/MyData/Netzwerk/Heimnetzwerk/Repositorys/myUvr1611DataLogger/trunk/config/config.ini";
-    const DEFAULT_CONFIG_FILE = "config/config.ini";
+    const DEFAULT_CONFIG_FILE = "/var/www/myUvr1611DataLogger/config/config.ini";
  
     /**
      * Singleton Interface
@@ -37,12 +36,12 @@ class Config
         if (empty($options)) {
             $options = parse_ini_file(self::DEFAULT_CONFIG_FILE,true);
         }
-		if ($options) {
-	        $this->setConfig($options);
-		}
+	if ($options) {
+		$this->setConfig($options);
+	}
 		else {
-			throw new Exception("config.ini not found.");
-		}
+		throw new Exception("config.ini not found. ".$options);
+	}
     }
  
     /**

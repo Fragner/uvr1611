@@ -59,12 +59,12 @@ class BlnetConnection
 	{
 		//get instance off logger
 		$this->logfile = LogFile::getInstance();
-		$this->logfile->writeLogInfo("uvr1611-connection.inc - construct \n");
+		$this->logfile->writeLogInfo("blnet-connection.inc - construct \n");
 		$config = Config::getInstance();
-        $this->logfile->writeLogInfo("uvr1611-connection.inc - config \n");
+        $this->logfile->writeLogInfo("blnet-connection.inc - config \n");
 		$this->config = $config->uvr1611;
 		$this->debug = $config->app->debug;
-		$this->logfile->writeLogInfo("uvr1611-connection.inc - checkMode \n");
+		$this->logfile->writeLogInfo("blnet-connection.inc - checkMode \n");
 		$this->checkMode();
 	}
 
@@ -75,55 +75,57 @@ class BlnetConnection
 	 */
 	public function getLatest()
 	{
-		$this->logfile->writeLogInfo("uvr1611-connection.inc - getLatest - 1\n");
+		$this->logfile->writeLogInfo("blnet-connection.inc - getLatest - 1\n");
 		$this->connect();
 		$this->getCount();
 		create_pid();
 		$frames = array();
-        $this->logfile->writeLogInfo("uvr1611-connection.inc - pid created - 2\n");
-
-		$info = array();
-		// for all can frames
-		for($j=1; $j<=$this->canFrames; $j++) {
-			// build command
-			$cmd = pack("C2",self::GET_LATEST,$j);
-			// try 4 times to get values
-			for($i=0; $i<self::MAX_RETRYS; $i++) {
-				$data = $this->query($cmd, $this->actualSize);
-				
-				if($this->checksum($data)) {
-					$binary = unpack("C*",$data);
-					if($binary[1] == self::WAIT_TIME) {
-						$info["sleep"]["frame$j"][] = $binary[2];
-						$this->disconnect();
-						// wait some seconds for data
-						sleep($binary[2]);
-						$this->connect();
+        $this->logfile->writeLogInfo("blnet-connection.inc - pid created - 2\n");
+		try {		
+			$info = array();
+			// for all can frames
+			for($j=1; $j<=$this->canFrames; $j++) {
+				// build command
+				$cmd = pack("C2",self::GET_LATEST,$j);
+				// try 4 times to get values
+				for($i=0; $i<self::MAX_RETRYS; $i++) {
+					$data = $this->query($cmd, $this->actualSize);
+					if($this->checksum($data)) {
+						$binary = unpack("C*",$data);
+						if($binary[1] == self::WAIT_TIME) {
+							$info["sleep"]["frame$j"][] = $binary[2];
+							$this->disconnect();
+							// wait some seconds for data
+							sleep($binary[2]);
+							$this->connect();
+						}
+						else {	
+							$info["got"]["frame$j"] = $i;
+							$frames = array_merge($frames, $this->splitLatest($data, "frame$j"));
+							break;
+						}
 					}
-					else {	
-						$info["got"]["frame$j"] = $i;
-						$frames = array_merge($frames, $this->splitLatest($data, "frame$j"));
-						break;
+					if($i==self::MAX_RETRYS-1) {
+						$frames["frame$k"] = "timeout";
 					}
 				}
-				if($i==self::MAX_RETRYS-1) {
-					$frames["frame$k"] = "timeout";
+			}
+			$this->logfile->writeLogInfo("blnet-connection.inc - close pid  - 3\n");
+			close_pid();
+			$this->disconnect();
+			if(count($frames)>0) {
+				$frames["time"] = date("H:i:s");
+				if($this->debug) {
+					$frames["info"] = $info;
 				}
+				return $frames;
 			}
 		}
-        $this->logfile->writeLogInfo("uvr1611-connection.inc - close pid  - 3\n");
-		close_pid();
-		$this->disconnect();
-		if(count($frames)>0) {
-			$frames["time"] = date("H:i:s");
-			if($this->debug) {
-				$frames["info"] = $info;
-			}
-			return $frames;
+		catch (Exception $e) {		
+			close_pid();		
+			$this->logfile->writeLogError("blnet-connection.inc-getLatest - ".$e->getMessage()."\n");			
+			//throw new Exception("Could not get latest data.");
 		}
-		close_pid();		
-		$this->logfile->writeLogError("uvr1611-connection.inc-getLatest - ".$e->getMessage()."\n");			
-		throw new Exception("Could not get latest data.");
 	}
 	
 	/**
@@ -143,13 +145,13 @@ class BlnetConnection
 		$this->connect();
 		// send end read command
 		if($this->query(self::END_READ, 1) != self::END_READ) {
-			$this->logfile->writeLogWarn("uvr1611-connection.inc-endRead - End read command failed.\n");			
+			$this->logfile->writeLogWarn("blnet-connection.inc-endRead - End read command failed.\n");			
 //test			throw new Exception("End read command failed.");
 		}
 		// reset data if configured
 		if($success && $this->config->reset) {
 			if($this->query(self::RESET_DATA, 1) != self::RESET_DATA) {
-				$this->logfile->writeLogError("uvr1611-connection.inc-endRead - Could not reset memory.\n");						
+				$this->logfile->writeLogError("blnet-connection.inc-endRead - Could not reset memory.\n");						
 				throw new Exception("Could not reset memory.");
 			}
 		}
@@ -168,7 +170,7 @@ class BlnetConnection
 	public function fetchData()
 	{
 		if($this->count > 0) {
-			$this->logfile->writeLogInfo("uvr1611-connection.inc - fetchData - 1\n");
+			$this->logfile->writeLogInfo("blnet-connection.inc - fetchData - 1\n");
 			$this->connect();
 			
 			// build address for bootloader
@@ -190,7 +192,7 @@ class BlnetConnection
 				$this->count--;
 				return $this->splitDatasets($data);
 			}
-			$this->logfile->writeLogInfo("uvr1611-connection.inc - fetchData - 4\n");
+			$this->logfile->writeLogInfo("blnet-connection.inc - fetchData - 4\n");
 			throw new Exception("Could not get data.");
 		}
 	}
@@ -202,11 +204,11 @@ class BlnetConnection
 	public function getCount()
 	{
 		if($this->count == -1) {
-            $this->logfile->writeLogInfo("uvr1611-connection.inc - getCount - 1 \n");
+            $this->logfile->writeLogInfo("blnet-connection.inc - getCount - 1 \n");
 			$this->connect();
-			$this->logfile->writeLogInfo("uvr1611-connection.inc - getCount - connect \n");
+			$this->logfile->writeLogInfo("blnet-connection.inc - getCount - connect \n");
 			$data = $this->query(self::GET_HEADER, 21);
-			$this->logfile->writeLogInfo("uvr1611-connection.inc - getCount - query \n");
+			$this->logfile->writeLogInfo("blnet-connection.inc - getCount - query \n");
 			
 			if($this->checksum($data)) {
 				switch($this->mode) {
@@ -291,7 +293,7 @@ class BlnetConnection
 			case self::DL2_MODE:
 				return;
 		}
-		$this->logfile->writeLogError("uvr1611-connection.inc-checkMode - BL-Net mode is not supported!\n");		
+		$this->logfile->writeLogError("blnet-connection.inc-checkMode - BL-Net mode is not supported!\n");		
 		throw new Exception('BL-Net mode is not supported!');
 	}
 	
@@ -352,24 +354,24 @@ class BlnetConnection
 		$receives = 0;
 		// send command
 		if(strlen($cmd) == socket_write($this->sock, $cmd, strlen($cmd))) {
-			$this->logfile->writeLogInfo("uvr1611-connection.inc - query - Command: ".bin2hex($cmd)."\n");
+			$this->logfile->writeLogInfo("blnet-connection.inc - query - Command: ".bin2hex($cmd)."\n");
 			$data = "";
 			// get response until length or less 32 bytes
 			do {
 				/* sometimes the query will not finish */
-				$this->logfile->writeLogInfo("uvr1611-connection.inc - query - socket_read \n");
+				$this->logfile->writeLogInfo("blnet-connection.inc - query - socket_read \n");
 				$return = socket_read($this->sock, $length, PHP_BINARY_READ);
-				$this->logfile->writeLogInfo("uvr1611-connection.inc - query - socket_readed\n");				
+				$this->logfile->writeLogInfo("blnet-connection.inc - query - socket_readed\n");				
 				$data .= $return;
 				$receives++;
 			}
 			while(strlen($return)>32 && strlen($data) < $length);
-			$this->logfile->writeLogInfo("uvr1611-connection.inc - query - packets received: ".$receives."\n");
+			$this->logfile->writeLogInfo("blnet-connection.inc - query - packets received: ".$receives."\n");
 			return $data;
 		}
 
 		$this->disconnect();
-		$this->logfile->writeLogError("uvr1611-connection.inc-query - Error while querying command!Command: ".bin2hex($cmd)."\n");
+		$this->logfile->writeLogError("blnet-connection.inc-query - Error while querying command!Command: ".bin2hex($cmd)."\n");
 		throw new Exception('Error while querying command.\nCommand: '.bin2hex($cmd));
 	}
 	
@@ -433,7 +435,7 @@ class BlnetConnection
 		$database = Database::getInstance();
 		$frames = array();
 		switch($this->mode) {
-			case self::CAN_MODE:
+			case self::CAN_MODE:			
 				$frames[$frame] = (array)(new BlnetParser(substr($data, 1, self::LATEST_SIZE)));
 				$current_energy = $database->getCurrentEnergy($frame);
 				$frames[$frame]["current_energy1"] = $current_energy[0];
@@ -451,7 +453,7 @@ class BlnetConnection
 				$frames["frame1"]["current_energy1"] = $current_energy[0];
 				$frames["frame1"]["current_energy2"] = $current_energy[1];
 				$frames["frame2"] = (array)(new BlnetParser(substr($data,1+self::LATEST_SIZE, self::LATEST_SIZE)));
-				$current_energy = $database->getCurrentEnergy("frame2");
+				$current_energy = $database->getCurrentEnergy("frame2");								
 				$frames["frame2"]["current_energy1"] = $current_energy[0];
 				$frames["frame2"]["current_energy2"] = $current_energy[1];
 				break;

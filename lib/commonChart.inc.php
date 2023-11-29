@@ -8,10 +8,10 @@
 include_once("lib/backend/logfile.php");
 include_once("lib/config.inc.php");
 $setUvr1611Data = false;
-if (is_file("/home/pi/scripts/uvr1611/setUvr1611Data.php"))
+if (is_file("/usr/local/src/scripts/uvr1611/setUvr1611Data.php"))
 {
 	$setUvr1611Data = true;
-	include_once("/home/pi/scripts/uvr1611/setUvr1611Data.php");	
+	include_once("/usr/local/src/scripts/uvr1611/setUvr1611Data.php");	
 }
 
 $logfile = LogFile::getInstance();

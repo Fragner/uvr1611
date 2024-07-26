@@ -5,14 +5,13 @@
 		header("Location: install.php");
 		exit();
 	}
-
+	include_once("lib/includePath.php");
 	include_once("lib/config.inc.php");
 	$config = Config::getInstance();
 	$email = $config->app->email;
 	$name = $config->app->name;
 	$address = $config->uvr1611->address;
 	$http_port = $config->uvr1611->http_port;
-			
 	echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -23,7 +22,11 @@
     <title>UVR1611/Piko Data Logger</title>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>	
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<!-- 
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+-->
     <script type="text/javascript" src="js/datepicker.de.js"></script>
     <script type="text/javascript" src="js/charts.js"></script>	
     <script type="text/javascript" src="js/toolbar.js"></script>
@@ -33,7 +36,6 @@
 	<link rel="stylesheet" type="text/css" href="css/smoothness/jquery-ui-1.9.2.custom.min.css">
 
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-
   </head>
 
   <body>

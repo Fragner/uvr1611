@@ -39,6 +39,10 @@ class Database
 	 */
 	private function __construct()
 	{
+		//https://php.watch/versions/8.1/mysqli-error-mode
+		//mysqli_report(MYSQLI_REPORT_OFF);
+		mysqli_report(MYSQLI_REPORT_ERROR|MYSQLI_REPORT_STRICT);
+
 		$this->config = Config::getInstance();
 		$this->mysqli = @new mysqli($this->config->mysql->server,
 								   $this->config->mysql->user,
@@ -195,7 +199,7 @@ class Database
 	 */
 	public function updateTables()
 	{
-		echo "FRAMA: database.inc - updateTables\n";
+		//echo "FRAMA: database.inc - updateTables\n";
 		$this->mysqli->query("CALL p_minmax;");
 		$this->mysqli->query("CALL p_max;");//frama-test
 		$this->mysqli->query("CALL p_energies;");
@@ -253,18 +257,16 @@ class Database
 	 * @param int $period
 	 * @return Array
 	 */
-	public function queryAnalog($date, $chartId, $period)
+	public function queryAnalog($date, $chartId, $period=1)
 	{
 		// get the columns of a chart
 		$statement = $this->mysqli->prepare("SELECT frame, type FROM t_names_of_charts ".
 											"WHERE chart_id=? ORDER BY t_names_of_charts.order ASC;");
-		$statement->bind_param('i', $chartId);
-		
-		$statement->execute();
+		$statement->bind_param("i", $chartId);		
+		$statement->execute();		
 		$statement->bind_result($frame, $name);
-		
 		$reduction = ($period+1)*$this->config->app->reduction;
-		
+
 		$columns = array();
 		$joins = array();
 		$columnNames = array();
@@ -276,27 +278,28 @@ class Database
 			$joins[$frame]   = "INNER JOIN t_data AS $frame ON ($frame.date = datasets.date AND $frame.frame=\"$frame\")";
 			$i++;
 		}
-
-		
-		$sql = "SELECT date, ";
-		$sql .= join(", ",$columnNames);
-		$sql .= " FROM (SELECT @row := @row+1 AS rownum, UNIX_TIMESTAMP(datasets.date) AS date, ";
-		$sql .= join(", ", $columns);
-		$sql .= " FROM (SELECT @row :=0) r, t_data AS datasets ";
-		$sql .= join(" ", $joins);
-		$sql .= " WHERE datasets.date > DATE_SUB(\"$date\", INTERVAL $period DAY) ".
-				"AND datasets.date < DATE_ADD(\"$date\", INTERVAL 1 DAY))".
-				"ranked WHERE rownum %$reduction =1 GROUP BY date;";
-													   
 		$statement->close();
-		// fetch chart data
 		$rows = array();
-		if(	$result = $this->mysqli->query($sql)) {
-			while($r = $result->fetch_array(MYSQLI_NUM)) {
-				$rows[] = $r;
+		if (($columnNames) && ($columns)) {
+			$sql = "SELECT date, ";
+			$sql .= join(", ",$columnNames);
+			$sql .= " FROM (SELECT @row := @row+1 AS rownum, UNIX_TIMESTAMP(datasets.date) AS date, ";
+			$sql .= join(", ", $columns);
+			$sql .= " FROM (SELECT @row :=0) r, t_data AS datasets ";
+			$sql .= join(" ", $joins);
+			$sql .= " WHERE datasets.date > DATE_SUB(\"$date\", INTERVAL $period DAY) ".
+					"AND datasets.date < DATE_ADD(\"$date\", INTERVAL 1 DAY))".
+					"ranked WHERE rownum %$reduction =1 GROUP BY date;";
+			// fetch chart data
+			if(	$result = $this->mysqli->query($sql)) {
+				while($r = $result->fetch_array(MYSQLI_NUM)) {
+					$rows[] = $r;
+				}
+				$result->close();
 			}
-			$result->close();
-		}
+		} else {
+			echo "queryAnalog -no colums -> no data:(!\n";
+		}		
 		return $rows;
 	}
 
@@ -357,6 +360,7 @@ class Database
 	 */
 	public function queryPower($date, $chartId, $period)
 	{
+		file_put_contents("/tmp/queryPower.log", "done -1\n", FILE_APPEND);
 		// get the columns of a chart
 		$statement = $this->mysqli->prepare("SELECT frame, type FROM t_names_of_charts ".
 											"WHERE chart_id=? ORDER BY t_names_of_charts.order ASC;");
@@ -378,23 +382,25 @@ class Database
 			$i++;
 		}
 
-		$sql = "SELECT date, ";
-		$sql .= join(", ",$columnNames);
-		$sql .= " FROM (SELECT @row := @row+1 AS rownum, UNIX_TIMESTAMP(datasets.date) AS date, ";
-		$sql .= join(", ", $columns);
-		$sql .= " FROM (SELECT @row :=0) r, t_data AS datasets ";
-		$sql .= join(" ", $joins);
-		$sql .= " WHERE datasets.date > DATE_SUB(\"$date\", INTERVAL $period DAY) ".
-				"AND datasets.date < DATE_ADD(\"$date\", INTERVAL 1 DAY))".
-				"ranked WHERE rownum %$reduction =1 GROUP BY date;";
-		
-		// fetch chart data
 		$rows = array();
-		if($result = $this->mysqli->query($sql)) {
-			while($r = $result->fetch_array(MYSQLI_NUM)) {
-				$rows[] = $r;
+		if (($columnNames) && ($columns)) {
+
+			$sql = "SELECT date, ";
+			$sql .= join(", ",$columnNames);
+			$sql .= " FROM (SELECT @row := @row+1 AS rownum, UNIX_TIMESTAMP(datasets.date) AS date, ";
+			$sql .= join(", ", $columns);
+			$sql .= " FROM (SELECT @row :=0) r, t_data AS datasets ";
+			$sql .= join(" ", $joins);
+			$sql .= " WHERE datasets.date > DATE_SUB(\"$date\", INTERVAL $period DAY) ".
+					"AND datasets.date < DATE_ADD(\"$date\", INTERVAL 1 DAY))".
+					"ranked WHERE rownum %$reduction =1 GROUP BY date;";			
+			// fetch chart data
+			if($result = $this->mysqli->query($sql)) {
+				while($r = $result->fetch_array(MYSQLI_NUM)) {
+					$rows[] = $r;
+				}
+				$result->close();
 			}
-			$result->close();
 		}
 		return $rows;
 	}
@@ -439,13 +445,14 @@ class Database
 											"WHERE chart_id=? ORDER BY t_names_of_charts.order ASC;");
 		$statement->bind_param('i', $chartId);
 		$statement->execute();
+		/* Store the result (to get properties) */
+		//$statement->store_result();
 		$statement->bind_result($frame, $name);
 	
 		$columns = array();
 		$sums = array();
 		$joins = array();
 		$i = 1;
-		
 		
 		// build chart query
 		while($statement->fetch()) {
@@ -458,11 +465,9 @@ class Database
 		switch($grouping) {
 			case 'years':
 				$sql =
-					"SELECT DATE_FORMAT(temp.date, '%Y ') AS date," . implode(", ", $sums) .
-							 
+					"SELECT DATE_FORMAT(temp.date, '%Y ') AS date," . implode(", ", $sums) .							 
 					" FROM (" .
-					"  SELECT datasets.date, " . implode(", ", $columns) .
-								
+					"  SELECT datasets.date, " . implode(", ", $columns) .								
 					"   FROM t_energies AS datasets " .
 					implode(" ", $joins) .
 					"   WHERE YEAR(datasets.date)" .
@@ -515,9 +520,7 @@ class Database
 					" GROUP BY datasets.date" .
 					" ORDER BY datasets.date ASC;";
 		}
-
-		$statement->close();
-
+		$statement->close();		
 		// fetch chart data
 		$rows = array();
 		if($result = $this->mysqli->query($sql)) {
@@ -526,7 +529,6 @@ class Database
 			}
 			$result->close();
 		}
-		
 		$data = array();
 		$data["rows"] = $rows; 
 		$sql = "SELECT MAX(energy1), SUM(energy1), AVG(energy1), MAX(energy2), SUM(energy2), AVG(energy2), frame FROM t_energies GROUP BY frame;";
@@ -540,7 +542,7 @@ class Database
 						                                      "avg" => $r[5]);
 			}
 			$result->close();
-		}
+		}		
 		$sql = "SELECT MAX(energy1), SUM(energy1), AVG(energy1), MAX(energy2), SUM(energy2), AVG(energy2), frame FROM t_energies GROUP BY frame;";
 		if($result = $this->mysqli->query($sql)) {
 			while($r = $result->fetch_array(MYSQLI_NUM)) {
@@ -562,7 +564,7 @@ class Database
 															 			"sum" => $r[3]);
 			}
 			$result->close();
-		}
+		}	
 		$sql = "SELECT AVG(energy1), SUM(energy1), AVG(energy2), SUM(energy2), frame FROM t_energies WHERE MONTH(date) IN (4, 5, 6, 7, 8, 9) GROUP BY frame;";
 		if($result = $this->mysqli->query($sql)) {
 			while($r = $result->fetch_array(MYSQLI_NUM)) {
@@ -571,9 +573,12 @@ class Database
 				$data["statistics"][$r[4]]["energy2"]["summer"] = array("avg" => $r[2],
 																		"sum" => $r[3]);
 			}
-			$result->close();
+			$result->close();		
 		}
 		
+		//$var = print_r($data, true);
+		//file_put_contents("/tmp/queryEnergy.log", "done -8\n", FILE_APPEND);
+		//file_put_contents("/tmp/queryEnergy.log", $var, FILE_APPEND);		
 		return $data;
 	}
 	

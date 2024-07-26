@@ -18,8 +18,8 @@ $logfile = LogFile::getInstance();
 $logfile->writeLogInfo("commonChart.inc.php - start!\n");
 //get instance off logger
 
-include_once("/var/www/myUvr1611DataLogger/lib/backend/uvr1611.inc.php");
-include_once("/var/www/myUvr1611DataLogger/lib/backend/database.inc.php");
+include_once("lib/backend/uvr1611.inc.php");
+include_once("lib/backend/database.inc.php");
 date_default_timezone_set("Europe/Berlin");
 
 // set json header
@@ -28,15 +28,17 @@ header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Content-type: application/json; charset=utf-8');
 
 // get date for chart
-$date = date("Y-m-d");
 if(isset($_GET["date"])) {
 	$date = date("Y-m-d", strtotime($_GET["date"]));
+} else {
+	$date = date("Y-m-d");
 }
 
 // get chart id
-$chartId = 1;
 if(isset($_GET["id"])) {
 	$chartId = $_GET["id"];
+} else {
+	$chartId = 5;
 }
 
 // get period
@@ -54,12 +56,15 @@ if(isset($_GET["period"])) {
 		default:
 			$period = 0;
 	}
+} else {
+	$period = 0;
 }
 
 // get grouping
-$grouping = "days";
 if(isset($_GET["grouping"])) {
 	$grouping = $_GET["grouping"];
+} else {
+	$grouping = "weeks";
 }
 
 // connect to database
@@ -75,52 +80,48 @@ if($date == date("Y-m-d") && ($database->lastDataset() + Config::getInstance()->
 		$data = Array();
 	        $lastDatabaseValue = $database->lastDataset();
 		try {
-		$count = $uvr->startRead();
-if ($count > 0) {
-		$logfile->writeLogInfo("commonChart.inc.php - date okay - 2\n");			
-		;
-
-		$logfile->writeLogInfo("commonChart.inc.php - date okay - 3\n");					
-		for($i=0; $i < $count; $i++) {
-			$logfile->writeLogInfo("commonChart.inc.php - try fetchdata\n");					
-			// fetch a set of dataframes and insert them into the database
-			$value = $uvr->fetchData();
-			$logfile->writeLogInfo("commonChart.inc.php - data fetched\n");						
-			if($value !== false) {
-		    	if(strtotime($value["frame1"]["date"]) < $lastDatabaseValue) {
-		    		break;
-		    	}
-		    	$data[] = $value;
-		    	if(count($data) == 64) {
-	         		    $logfile->writeLogState("commonChart.inc.php - insertData ".$count."\n");
-				    $database->insertData($data);
-				    $data = Array();
-			    }
-		    }
+			$count = $uvr->startRead();
+			if ($count > 0) {
+				$logfile->writeLogInfo("commonChart.inc.php - date okay - 2\n");			
+				for($i=0; $i < $count; $i++) {
+					$logfile->writeLogInfo("commonChart.inc.php - try fetchdata\n");					
+					// fetch a set of dataframes and insert them into the database
+					$value = $uvr->fetchData();
+					$logfile->writeLogInfo("commonChart.inc.php - data fetched\n");						
+					if($value !== false) {
+						if(strtotime($value["frame1"]["date"]) < $lastDatabaseValue) {
+							break;
+						}
+						$data[] = $value;
+						if(count($data) == 64) {
+								$logfile->writeLogState("commonChart.inc.php - insertData ".$count."\n");
+							$database->insertData($data);
+							$data = Array();
+						}
+					}
+				}
+				$uvr->endRead();
+				// insert all data into database
+				$database->insertData($data);
+				$database->updateTables();
+				$logfile->writeLogState("commonChart.inc.php - insert ".$count." sets in Database should be done\n");
+				if ($count == 4095) {
+				//additional debug info
+					$logfile->writeLogState("commonChart.inc.php - myCount:= ".$myCount." value of i:= ".$i."\n");
+				}
+				checkUvr1611State(1);
+			} else {
+				$logfile->writeLogError("commonChart.inc.php - getCount: $count \n");
+				checkUvr1611State(0);
+			}
 		}
-		$uvr->endRead();
-		// insert all data into database
-		$database->insertData($data);
-		$database->updateTables();
-		$logfile->writeLogState("commonChart.inc.php - insert ".$count." sets in Database should be done\n");
-		if ($count == 4095) {
-		//additional debug info
-			$logfile->writeLogState("commonChart.inc.php - myCount:= ".$myCount." value of i:= ".$i."\n");
+		catch (Exception $e) {
+			$uvr->endRead(false);
+			$logfile->writeLogError("commonChart.inc.php - exception: ".$e->getMessage()."\n");
+			echo "{'error':'".$e->getMessage()."'}";
+			checkUvr1611State(0);
 		}
-		checkUvr1611State(1);
-	} else {
-		$logfile->writeLogError("commonChart.inc.php - getCount: $count \n");
-		checkUvr1611State(0);
-	}
-	}
-	catch (Exception $e) {
-		$uvr->endRead(false);
-		$logfile->writeLogError("commonChart.inc.php - exception: ".$e->getMessage()."\n");
-		echo "{'error':'".$e->getMessage()."'}";
-		checkUvr1611State(0);
-	}
-} 
-else {
+} else {
 	$logfile->writeLogState("commonChart.inc.php - no entry in Database --> timegap too small\n");
 }
 
